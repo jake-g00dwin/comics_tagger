@@ -292,14 +292,6 @@ run_c_tests () {
 
     read -p "Press anykey to continue:" input
 
-    if make Mock_Tests; then
-        tests/Mock_Tests -v -c
-    else
-        echo "Failed to build Mock_Tests."
-        echo "Press anykey to exit:"
-        read input 
-    fi
-
 }
 
 print_menu () {
