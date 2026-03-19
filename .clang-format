@@ -1,0 +1,48 @@
+# ---
+Language: Cpp
+# The Based on style flag causes nothing to work.
+#BasedOnStyle: None
+AlignTrailingComments: true
+AlignArrayOfStructures: Left 
+
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: false
+
+AlignConsecutiveBitFields:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: false
+
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: false
+
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+  AlignCaseColons: false
+
+AllowAllArgumentsOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: true
+
+BreakBeforeBraces: Allman
+ColumnLimit: 0
+IndentWidth: 4
+KeepEmptyLinesAtTheStartOfBlocks: false
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+PointerBindsToType: false
+SpacesBeforeTrailingComments: 1
+TabWidth: 8
+UseTab: Never
+

@@ -1,0 +1,10 @@
+# TEST_RUNNER
+add_library(test_module_name
+    test_module_name.cpp    
+)
+
+target_link_libraries(test_module_name
+    ${CPPUTEST_LIBRARIES}/libCppUTest.a
+    ${CPPUTEST_LIBRARIES}/libCppUTestExt.a
+    module_name
+)

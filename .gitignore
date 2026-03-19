@@ -1,2 +1,12 @@
-*.cbz
-./test_comics/*.cbz
+build/CMakeFiles
+build/Testing/Temporary
+build/cpputest
+build/src
+build/tests
+build/CMakeCache.txt
+build/CTestTestfile.cmake
+build/Makefile
+build/cmake_install.cmake
+build/compile_commands.json
+.cache/clangd/index
+build/.cache/clangd/index
