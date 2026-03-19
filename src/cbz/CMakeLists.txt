@@ -11,14 +11,12 @@ if(NOT UNIT_TESTING)
         ${CMAKE_CURRENT_LIST_DIR}
         ${CMAKE_SOURCE_DIR}/inc/
     )
-    #target_link_libraries(cbz
-    #    RegEdit
-    #)
+    target_link_libraries(cbz
+        libzip 
+    )
 
     #These get defined in the toolchain files.
     #target_compile_options(cbz PUBLIC
-    #    ${OBJECT_GEN_FLAGS}
-    #    ${C_FLAGS_ARCH}
     #)
 
 else()
@@ -35,8 +33,10 @@ else()
         #Finally we include the local stuff, which has likely been overridden.
         ${CMAKE_CURRENT_SOURCE_DIR}
     )
+
     #Place Mocked/Regular dependencies here for unit testing.
-    #target_link_libraries(cbz
-    #    MockRegEdit
-    #)
+    target_link_libraries(cbz
+        libzip 
+    )
+
 endif()

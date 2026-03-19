@@ -6,6 +6,7 @@
  */
 
 #include "cbz.h"
+#include <zip.h>
 
 // dumb test function
 int add_two(int a)
