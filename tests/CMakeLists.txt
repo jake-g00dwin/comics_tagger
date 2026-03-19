@@ -1,7 +1,11 @@
 project(Tests)
 
-# TEST_DIRS 
+# TEST_DIRS
+add_subdirectory(cbz)
 add_subdirectory(simple_test)
+
+add_subdirectory(shared)
+
 
 # TEST_RUNNER
 add_executable(AllTests
@@ -9,8 +13,9 @@ add_executable(AllTests
 )
 
 target_link_libraries(AllTests
-    ${CPPUTEST_LIBRARIES}/libCppUTest.a
-    ${CPPUTEST_LIBRARIES}/libCppUTestExt.a
+    ${CPPUTEST_LIBRARIES}
     # TEST_LINKS
+    test_cbz
     simple_test
 )
+

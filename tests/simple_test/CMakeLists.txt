@@ -5,7 +5,6 @@ add_library(simple_test
 )
 
 target_link_libraries(simple_test
-    ${CPPUTEST_LIBRARIES}/libCppUTest.a
-    ${CPPUTEST_LIBRARIES}/libCppUTestExt.a
+    ${CPPUTEST_LIBRARIES}
 )
 
