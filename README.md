@@ -15,6 +15,14 @@ For the moment it uses the xml format to handle this.
 - Features CLI interface default.
 - Multi-file selection, enables bulk editing of tags.
 
+## Dependencies
+
+- WX widgets
+- libzip
+- sqlite
+- openmp?
+   
+
 
 ## Roadmap
 
@@ -34,6 +42,14 @@ For the moment it uses the xml format to handle this.
 - [ ] setup automatic comic pop-up to browse comic during tagging.
 - [ ] Add user rating out of 5.
 
+## Crazy Future Features?
+
+- [ ] AI content tagger/classifier.
+- [ ] AI language translator.
+- [ ] Re-Encoding / compression optimizer.
+- [ ] Reverse image search.
+- [ ] Automatic tag extractor(modular)
+- [ ] User adjustable memory caching.
 
 ## Instructions
 
