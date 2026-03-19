@@ -8,8 +8,8 @@
  */
 
 //#pragma once
-#ifndef module_name_H
-#define module_name_H
+#ifndef module_name
+#define module_name
 
 #ifdef __cplusplus
 extern "C"
@@ -21,11 +21,9 @@ extern "C"
 #include <stdbool.h>
 #include <stddef.h>
 
-int add_two(int a);
-
 
 #ifdef __cplusplus
 }
 #endif // __cplusplus
 
-#endif //module_name_H
+#endif //module_name   
