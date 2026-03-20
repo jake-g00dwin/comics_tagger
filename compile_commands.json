@@ -1,7 +1,1 @@
-[
-{
-  "directory": "/home/ronin/Documents/projects/templates/wx_cpp_template/build/src",
-  "command": "/usr/bin/c++ -DUNIX -DWXUSINGDLL -D_FILE_OFFSET_BITS=64 -D__WXGTK__ -I/home/ronin/Documents/projects/templates/wx_cpp_template/./inc -isystem /usr/local/lib/wx/include/gtk3-unicode-3.2 -isystem /usr/local/include/wx-3.2 -Wall -Werror -Wpedantic -pthread -std=gnu++17 -o CMakeFiles/main.dir/main.cpp.o -c /home/ronin/Documents/projects/templates/wx_cpp_template/src/main.cpp",
-  "file": "/home/ronin/Documents/projects/templates/wx_cpp_template/src/main.cpp"
-}
-]
+./build/compile_commands.json
