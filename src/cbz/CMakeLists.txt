@@ -12,7 +12,7 @@ if(NOT UNIT_TESTING)
         ${CMAKE_SOURCE_DIR}/inc/
     )
     target_link_libraries(cbz
-        libzip 
+        zip 
     )
 
     #These get defined in the toolchain files.
@@ -36,7 +36,7 @@ else()
 
     #Place Mocked/Regular dependencies here for unit testing.
     target_link_libraries(cbz
-        libzip 
+        zip 
     )
 
 endif()
