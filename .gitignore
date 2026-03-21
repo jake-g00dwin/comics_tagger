@@ -11,3 +11,4 @@ build/compile_commands.json
 .cache/clangd/index
 build/.cache/clangd/index
 tags
+AllTests.core
