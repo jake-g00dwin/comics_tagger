@@ -51,6 +51,11 @@ TEST(tg_cbz, initmetadata_allocates)
     CHECK_EQUAL(CBZ_DEFAULT_YEAR, md.year);
     CHECK_EQUAL(CBZ_DEFAULT_MONTH, md.month);
     CHECK_EQUAL(CBZ_DEFAULT_DAY, md.day);
+    CHECK_EQUAL(CBZ_DEFAULT_ISSUE, md.issue);
+    STRCMP_EQUAL("english", md.language);
+    STRCMP_EQUAL("", md.description);
+    CHECK_EQUAL(0, md.tag_vector.length);
+    CHECK_EQUAL(CBZ_DEFAULT_TAGVEC_CAP, md.tag_vector.capacity);
 
     CHECK_TRUE(cbz_free_metadata(&md) == STATUS_OK);
 
@@ -58,6 +63,13 @@ TEST(tg_cbz, initmetadata_allocates)
     CHECK_EQUAL(NULL, md.series);
     CHECK_EQUAL(NULL, md.author);
     CHECK_EQUAL(NULL, md.publisher);
+    CHECK_EQUAL(NULL, md.language);
+    CHECK_EQUAL(NULL, md.description);
+
+    CHECK_EQUAL(NULL, md.tag_vector.tags);
+    CHECK_EQUAL(0, md.tag_vector.length);
+    CHECK_EQUAL(0, md.tag_vector.capacity);
+
 }
 
 TEST(tg_cbz, free_metadata_ignoresNulls)
