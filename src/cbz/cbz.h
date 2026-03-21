@@ -33,6 +33,9 @@ extern "C"
 #define CBZ_DEFAULT_YEAR 1971
 #define CBZ_DEFAULT_MONTH 1
 #define CBZ_DEFAULT_DAY 1
+#define CBZ_DEFAULT_ISSUE 1
+
+#define CBZ_DEFAULT_TAGVEC_CAP 16
 
     enum status_codes
     {
@@ -76,7 +79,7 @@ extern "C"
     {
         metadata_tag_t *tags;
         size_t          length;
-        size_t          vec_capacity;
+        size_t          capacity;
     } metadata_tag_vec_t;
 
     typedef struct

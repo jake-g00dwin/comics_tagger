@@ -55,11 +55,31 @@ int cbz_init_metadata(cbz_metadata_t *md)
         return STATUS_ERR;
     }
 
-    md->year           = (uint16_t)CBZ_DEFAULT_YEAR;
-    md->month          = (uint8_t)CBZ_DEFAULT_MONTH;
-    md->day            = (uint8_t)CBZ_DEFAULT_DAY;
+    md->year     = (uint16_t)CBZ_DEFAULT_YEAR;
+    md->month    = (uint8_t)CBZ_DEFAULT_MONTH;
+    md->day      = (uint8_t)CBZ_DEFAULT_DAY;
+    md->issue    = (uint16_t)CBZ_DEFAULT_ISSUE;
 
-    md->is_initialized = true;
+    md->language = calloc(CBZ_MAX_LANG_LEN, sizeof(char));
+    if (!md->language)
+    {
+        fprintf(stderr, "Failed to allocate memory for: language\n");
+        return STATUS_ERR;
+    }
+    strcpy(md->language, "english");
+
+    md->description = calloc(CBZ_MAX_DESC_LEN, sizeof(char));
+    if (!md->description)
+    {
+        fprintf(stderr, "Failed to allocate memory for: description\n");
+        return STATUS_ERR;
+    }
+
+    md->tag_vector.length   = 0;
+    md->tag_vector.capacity = CBZ_DEFAULT_TAGVEC_CAP;
+    md->tag_vector.tags     = calloc(md->tag_vector.capacity, sizeof(metadata_tag_t));
+
+    md->is_initialized      = true;
     return STATUS_OK;
 }
 
@@ -86,6 +106,18 @@ int cbz_free_metadata(cbz_metadata_t *md)
     md->year      = (uint16_t)CBZ_DEFAULT_YEAR;
     md->month     = (uint8_t)CBZ_DEFAULT_MONTH;
     md->day       = (uint8_t)CBZ_DEFAULT_DAY;
+
+    free(md->language);
+    md->language = NULL;
+
+    free(md->description);
+    md->description = NULL;
+
+    // Probably need to free each individual tag as well.
+    free(md->tag_vector.tags);
+    md->tag_vector.tags     = NULL;
+    md->tag_vector.capacity = 0;
+    md->tag_vector.length   = 0;
 
     return STATUS_OK;
 }
