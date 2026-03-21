@@ -290,7 +290,7 @@ run_c_tests () {
         read input 
     fi
 
-    read -p "Press anykey to continue:" input
+    #read -p "Press anykey to continue:" input
 
 }
 
