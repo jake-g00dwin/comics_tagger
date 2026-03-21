@@ -39,4 +39,9 @@ else()
         zip 
     )
 
+    target_compile_options(cbz PUBLIC
+        -Wno-nullability-extension #Suppresses errors for nullability stuff.
+        #-Wno-nullability-completeness
+    )
+
 endif()
