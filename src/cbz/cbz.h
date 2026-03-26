@@ -126,6 +126,11 @@ extern "C"
     int get_cbz_data(void);
     */
 
+    // These functions pointers should be used to wrap the malloc/calloc funcs.
+
+    extern void **(fp_malloc)(size_t size);
+    extern void **(fp_calloc)(size_t number, size_t size);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

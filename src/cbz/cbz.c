@@ -78,8 +78,13 @@ int cbz_init_metadata(cbz_metadata_t *md)
     md->tag_vector.length   = 0;
     md->tag_vector.capacity = CBZ_DEFAULT_TAGVEC_CAP;
     md->tag_vector.tags     = calloc(md->tag_vector.capacity, sizeof(metadata_tag_t));
+    if (!md->tag_vector.tags)
+    {
+        fprintf(stderr, "Failed to allocate memory for: tags\n");
+        return STATUS_ERR;
+    }
 
-    md->is_initialized      = true;
+    md->is_initialized = true;
     return STATUS_OK;
 }
 
@@ -137,10 +142,8 @@ int cbz_create(cbz_t *cbz, const char *path)
     return 0;
 }
 
-// dumb test function
-int add_two(int a)
-{
-    int b = a;
-    b += 2;
-    return b;
-}
+// Default implimentation for function pointers.
+
+// void *(fp_malloc)(size_t size) = malloc;
+//void *(*fp_malloc)(size_t size)                = malloc;
+//void *(*fp_calloc)(size_t number, size_t size) = calloc;
