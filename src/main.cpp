@@ -1,33 +1,34 @@
-//For compilers that support precompilation, also includes the "wx.h" file.
+// For compilers that support precompilation, also includes the "wx.h" file.
 #include <wx/wx.h>
 
 // Declare the public applicasion class.
 class MyApp : public wxApp
 {
-    public:
-        // Called on app startup
-        virtual bool OnInit() override;
+  public:
+    // Called on app startup
+    virtual bool OnInit() override;
 };
 
-class MyFrame : public wxFrame 
+class MyFrame : public wxFrame
 {
-    public:
-        // ctor(s)
-        MyFrame(const wxString &title);
+  public:
+    // ctor(s)
+    MyFrame(const wxString &title);
 
-        // event handlers (these functions shouldn't be virtual)
-        void OnQuit(wxCommandEvent &event);
-        void OnAbout(wxCommandEvent &event);
-        void OnEdit(wxCommandEvent &event);
-        
-        void OnStartButtonClicked(wxCommandEvent &event);
-        void OnStopButtonClicked(wxCommandEvent &event);
+    // event handlers (these functions shouldn't be virtual)
+    void      OnQuit(wxCommandEvent &event);
+    void      OnAbout(wxCommandEvent &event);
+    void      OnEdit(wxCommandEvent &event);
 
-        wxButton *BtnStart;
-        wxButton *BtnStop;
-    private:
-        // any class wishing to process wxWidgets events must use this macro
-        wxDECLARE_EVENT_TABLE();
+    void      OnStartButtonClicked(wxCommandEvent &event);
+    void      OnStopButtonClicked(wxCommandEvent &event);
+
+    wxButton *BtnStart;
+    wxButton *BtnStop;
+
+  private:
+    // any class wishing to process wxWidgets events must use this macro
+    wxDECLARE_EVENT_TABLE();
 };
 
 // ----------------------------------------------------------------------------
@@ -47,9 +48,9 @@ enum
     // (where it is special and put into the "Apple" menu)
     Minimal_About = wxID_ABOUT,
 
-    //Button ids.
+    // Button ids.
     Btn_Start = wxID_HIGHEST + 1, // declares an id which will be used to call our button
-    Btn_Stop = wxID_HIGHEST + 2, // declares an id which will be used to call our button
+    Btn_Stop  = wxID_HIGHEST + 2, // declares an id which will be used to call our button
 };
 
 // ----------------------------------------------------------------------------
@@ -60,19 +61,19 @@ enum
 // handlers) which process them. It can be also done at run-time, but for the
 // simple menu events like this the static method is much simpler.
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
-    EVT_MENU(Minimal_Quit,  MyFrame::OnQuit)
-    EVT_MENU(Minimal_Edit,  MyFrame::OnEdit)
-    EVT_MENU(Minimal_About, MyFrame::OnAbout)
-    EVT_MENU(Btn_Start, MyFrame::OnStartButtonClicked)
-    EVT_MENU(Btn_Stop, MyFrame::OnStopButtonClicked)
-wxEND_EVENT_TABLE()
+    EVT_MENU(Minimal_Quit, MyFrame::OnQuit)
+        EVT_MENU(Minimal_Edit, MyFrame::OnEdit)
+            EVT_MENU(Minimal_About, MyFrame::OnAbout)
+                EVT_MENU(Btn_Start, MyFrame::OnStartButtonClicked)
+                    EVT_MENU(Btn_Stop, MyFrame::OnStopButtonClicked)
+                        wxEND_EVENT_TABLE()
 
-// Create a new application object: this macro will allow wxWidgets to create
-// the application object during program execution (it's better than using a
-// static object for many reasons) and also implements the accessor function
-// wxGetApp() which will return the reference of the right type (i.e. MyApp and
-// not wxApp)
-wxIMPLEMENT_APP(MyApp);
+    // Create a new application object: this macro will allow wxWidgets to create
+    // the application object during program execution (it's better than using a
+    // static object for many reasons) and also implements the accessor function
+    // wxGetApp() which will return the reference of the right type (i.e. MyApp and
+    // not wxApp)
+    wxIMPLEMENT_APP(MyApp);
 
 // ============================================================================
 // implementation
@@ -87,7 +88,7 @@ bool MyApp::OnInit()
 {
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future
-    if ( !wxApp::OnInit() )
+    if (!wxApp::OnInit())
         return false;
 
     // create the main application window
@@ -108,11 +109,11 @@ bool MyApp::OnInit()
 // ----------------------------------------------------------------------------
 
 // frame constructor
-MyFrame::MyFrame(const wxString& title)
-       : wxFrame(nullptr, wxID_ANY, title)
+MyFrame::MyFrame(const wxString &title)
+    : wxFrame(nullptr, wxID_ANY, title)
 {
     // set the frame icon
-    //SetIcon(wxICON(sample));
+    // SetIcon(wxICON(sample));
 
 #if wxUSE_MENUBAR
     // create a menu bar
@@ -134,21 +135,20 @@ MyFrame::MyFrame(const wxString& title)
     menuBar->Append(helpMenu, "&Help");
     // ... and attach this menu bar to the frame
     SetMenuBar(menuBar);
-    
-    //Now for the Button.
+
+    // Now for the Button.
     BtnStart = new wxButton(this, Btn_Start, _T("START"),
-            wxPoint(0, 0), wxSize(100, 30), 0);
-    BtnStop = new wxButton(this, Btn_Stop, _T("STOP"),
-            wxPoint(100,0), wxSize(100, 30), 0);
+                            wxPoint(0, 0), wxSize(100, 30), 0);
+    BtnStop  = new wxButton(this, Btn_Stop, _T("STOP"),
+                            wxPoint(100, 0), wxSize(100, 30), 0);
 
     BtnStart->Bind(wxEVT_BUTTON, &MyFrame::OnStartButtonClicked, this);
     BtnStop->Bind(wxEVT_BUTTON, &MyFrame::OnStopButtonClicked, this);
-    
 
-#else // !wxUSE_MENUBAR
+#else  // !wxUSE_MENUBAR
     // If menus are not available add a button to access the about box
-    wxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
-    wxButton* aboutBtn = new wxButton(this, wxID_ANY, "About...");
+    wxSizer  *sizer    = new wxBoxSizer(wxHORIZONTAL);
+    wxButton *aboutBtn = new wxButton(this, wxID_ANY, "About...");
     aboutBtn->Bind(wxEVT_BUTTON, &MyFrame::OnAbout, this);
     sizer->Add(aboutBtn, wxSizerFlags().Center());
     SetSizer(sizer);
@@ -161,44 +161,40 @@ MyFrame::MyFrame(const wxString& title)
 #endif // wxUSE_STATUSBAR
 }
 
-
 // event handlers
 
-void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
+void MyFrame::OnQuit(wxCommandEvent &WXUNUSED(event))
 {
     // true is to force the frame to close
     Close(true);
 }
 
-void MyFrame::OnEdit(wxCommandEvent& WXUNUSED(event))
+void MyFrame::OnEdit(wxCommandEvent &WXUNUSED(event))
 {
     SetStatusText("Copied to clipboard!");
 }
 
-void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
+void MyFrame::OnAbout(wxCommandEvent &WXUNUSED(event))
 {
-    wxMessageBox(wxString::Format
-                 (
-                    "Welcome to %s!\n"
-                    "\n"
-                    "This is the minimal wxWidgets sample\n"
-                    "running under %s.",
-                    wxVERSION_STRING,
-                    wxGetOsDescription()
-                 ),
+    wxMessageBox(wxString::Format(
+                     "Welcome to %s!\n"
+                     "\n"
+                     "This is the minimal wxWidgets sample\n"
+                     "running under %s.",
+                     wxVERSION_STRING,
+                     wxGetOsDescription()),
                  "About wxWidgets minimal sample",
                  wxOK | wxICON_INFORMATION,
                  this);
 }
 
-
-//Button Event handlers
-void MyFrame::OnStartButtonClicked(wxCommandEvent& event)
+// Button Event handlers
+void MyFrame::OnStartButtonClicked(wxCommandEvent &event)
 {
     SetStatusText("Start Button Pressed!");
 }
 
-void MyFrame::OnStopButtonClicked(wxCommandEvent& event)
+void MyFrame::OnStopButtonClicked(wxCommandEvent &event)
 {
     SetStatusText("Stop Button Pressed!");
 }
