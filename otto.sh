@@ -290,6 +290,17 @@ run_c_tests () {
         read input 
     fi
 
+    read -p "Press anykey to continue:" input
+
+    if make MockedMemTests; then
+        echo "Running: MockedMemTests -c -v"
+        ./tests/MockedMemTests -v -c
+    else
+        echo "Failed to build AllTests."
+        echo "Press anykey to exit:"
+        read input 
+    fi
+
     #read -p "Press anykey to continue:" input
 
 }
