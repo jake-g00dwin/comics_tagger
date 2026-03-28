@@ -275,34 +275,26 @@ build_main () {
     make main
 }
 
+run_test_runner () {
+    local runner="$1"
+    if make $runner; then
+        echo "Running: ${runner} -c -v"
+        ./tests/${runner} -v -c
+    else
+        echo "Failed to build ${runner}"
+        echo "Press anykey to exit:"
+        read input 
+    fi
+    read -p "Press anykey to continue:" input
+}
+
 run_c_tests () {
     generate_tags_file
     format_source_code 
     clear_cmake_cache
     cmake -DUNIT_TESTING=ON  -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE} ../
 
-    if make AllTests; then
-        echo "Running: AllTests -c -v"
-        ./tests/AllTests -v -c
-    else
-        echo "Failed to build AllTests."
-        echo "Press anykey to exit:"
-        read input 
-    fi
-
-    read -p "Press anykey to continue:" input
-
-    if make MockedMemTests; then
-        echo "Running: MockedMemTests -c -v"
-        ./tests/MockedMemTests -v -c
-    else
-        echo "Failed to build AllTests."
-        echo "Press anykey to exit:"
-        read input 
-    fi
-
-    #read -p "Press anykey to continue:" input
-
+    run_test_runner AllTests
 }
 
 print_menu () {
