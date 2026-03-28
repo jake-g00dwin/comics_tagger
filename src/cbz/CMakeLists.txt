@@ -12,7 +12,6 @@ if(NOT UNIT_TESTING)
         ${CMAKE_SOURCE_DIR}/inc/
     )
     target_link_libraries(cbz
-        mem
         zip 
     )
 
@@ -38,7 +37,6 @@ else()
 
     #Place Mocked/Regular dependencies here for unit testing.
     target_link_libraries(cbz
-        mem_mock 
         zip 
     )
 

@@ -6,7 +6,6 @@
  */
 
 #include "cbz.h"
-#include "mem.h"
 
 #include <errno.h>
 #include <stdio.h>
