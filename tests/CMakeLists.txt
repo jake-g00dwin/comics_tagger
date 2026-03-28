@@ -18,4 +18,3 @@ target_link_libraries(AllTests
     test_cbz
     simple_test
 )
-

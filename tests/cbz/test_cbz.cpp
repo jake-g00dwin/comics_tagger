@@ -6,20 +6,37 @@
  */
 
 #include "CppUTest/CommandLineTestRunner.h"
+//#include "CppUTest/TestHarness.h"
+#include "CppUTestExt/MockSupport.h"
 
 extern "C" 
 {
 #include "cbz.h"
+//#include "mem_mock.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
 }
 
+size_t calloc_count = 0;
+size_t malloc_count = 0;
+size_t free_count = 0;
+
+
+void *calloc_impl(size_t number, size_t size);
+void free_impl(void *ptr);
+
 TEST_GROUP(tg_cbz)
 {
+
     void setup()
     {
 
+        UT_PTR_SET(calloc_fn, calloc_impl);
+        UT_PTR_SET(free_fn, free_impl);
+        calloc_count = 0;
+        malloc_count = 0;
+        free_count = 0;
     }
     void teardown()
     {
@@ -37,9 +54,39 @@ bool file_exists(const char *filename)
     return false;
 }
 
+
+void *calloc_impl(size_t number, size_t size)
+{
+    calloc_count += 1;
+    return calloc(number, size);
+}
+//void *(*calloc_fn)(size_t number, size_t size) = calloc_impl;
+
+void free_impl(void *ptr)
+{
+    free_count += 1;
+    free(ptr);
+}
+//void (*free_fn)(void *ptr) = free_impl;
+
+TEST(tg_cbz, dynamicmemorytrackercounts)
+{
+    int *mem_ptr = (int *)calloc_fn(8, sizeof(int));
+    if(!mem_ptr){
+        FAIL("mem_ptr == NULL");
+    }
+
+    CHECK_EQUAL_TEXT(1, calloc_count, "calloc_count != 1");
+
+    free_fn(mem_ptr);
+
+    CHECK_EQUAL_TEXT(calloc_count, free_count, "Number of allocs and free !=");
+}
+
 TEST(tg_cbz, initmetadata_allocates)
 {
-    cbz_metadata_t md; 
+    cbz_metadata_t md;
+
     CHECK_EQUAL(STATUS_OK, cbz_init_metadata(&md));
    
     CHECK_TRUE(md.is_initialized);
@@ -70,12 +117,47 @@ TEST(tg_cbz, initmetadata_allocates)
     CHECK_EQUAL(0, md.tag_vector.length);
     CHECK_EQUAL(0, md.tag_vector.capacity);
 
+    CHECK_EQUAL_TEXT(calloc_count, free_count, "Number of allocs and free !=");
 }
 
 TEST(tg_cbz, free_metadata_ignoresNulls)
 {
     cbz_metadata_t md;
     CHECK_TRUE(cbz_free_metadata(&md) == STATUS_ERR);
+}
+
+TEST(tg_cbz, tag_vector_inits_empty)
+{
+    metadata_tag_vec_t tag_vec;
+    CHECK_EQUAL(STATUS_OK, cbz_tag_vec_init(&tag_vec));
+
+    CHECK_EQUAL(NULL, tag_vec.tags);
+    CHECK_EQUAL(0, tag_vec.length);
+    CHECK_EQUAL(0, tag_vec.capacity);
+    
+    //CHECK_EQUAL_TEXT(1, calloc_count, "Expected memory not allocated.");
+}
+
+TEST(tg_cbz, tag_vector_inits_rejects_nullptr)
+{
+    metadata_tag_vec_t *tag_vec = NULL;
+    CHECK_EQUAL(STATUS_ERR, cbz_tag_vec_init(tag_vec));
+}
+
+TEST(tg_cbz, tag_vector_set_capacity)
+{
+    metadata_tag_vec_t tag_vec;
+    CHECK_EQUAL(STATUS_OK, cbz_tag_vec_init(&tag_vec));
+    
+    CHECK_EQUAL(STATUS_OK, cbz_tag_vec_set_capacity(&tag_vec, 10));
+    CHECK_EQUAL(10, tag_vec.capacity);
+    CHECK_TRUE(tag_vec.tags != NULL);
+    CHECK_EQUAL(10, calloc_count);
+    
+    CHECK_EQUAL(STATUS_OK, cbz_tag_vec_set_capacity(&tag_vec, 12));
+    CHECK_EQUAL(12, tag_vec.capacity);
+    CHECK_TRUE(tag_vec.tags != NULL);
+    CHECK_EQUAL(12, calloc_count);
 }
 
 /*
