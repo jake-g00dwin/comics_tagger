@@ -8,9 +8,9 @@
 #include "cbz.h"
 #include "mem.h"
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
 // #include <uchar.h>
@@ -22,14 +22,13 @@
 
 // Default implimentation assignments.
 void *(*calloc_fn)(size_t number, size_t size) = calloc;
-void *(*malloc_fn)(size_t size) = malloc;
+void *(*malloc_fn)(size_t size)                = malloc;
 void (*free_fn)(void *ptr)                     = free;
 
 // Helper(Private) Functions
 
 int init_metadata_title(cbz_metadata_t *md)
 {
-    // md->title = calloc(CBZ_MAX_TITLE_LEN, sizeof(char));
     md->title = calloc_fn(CBZ_MAX_TITLE_LEN, sizeof(char));
     if (!md->title)
     {
@@ -82,7 +81,7 @@ void init_metadata_date(cbz_metadata_t *md)
 
 int init_metadata_language(cbz_metadata_t *md)
 {
-    md->language = calloc(CBZ_MAX_LANG_LEN, sizeof(char));
+    md->language = calloc_fn(CBZ_MAX_LANG_LEN, sizeof(char));
     if (!md->language)
     {
         fprintf(stderr, "Failed to allocate memory for: language\n");
@@ -94,7 +93,7 @@ int init_metadata_language(cbz_metadata_t *md)
 
 int init_metadata_description(cbz_metadata_t *md)
 {
-    md->description = calloc(CBZ_MAX_DESC_LEN, sizeof(char));
+    md->description = calloc_fn(CBZ_MAX_DESC_LEN, sizeof(char));
     if (!md->description)
     {
         fprintf(stderr, "Failed to allocate memory for: description\n");
@@ -107,7 +106,7 @@ int init_metadata_tags(cbz_metadata_t *md)
 {
     md->tag_vector.length   = 0;
     md->tag_vector.capacity = CBZ_DEFAULT_TAGVEC_CAP;
-    md->tag_vector.tags     = calloc(md->tag_vector.capacity, sizeof(metadata_tag_t));
+    md->tag_vector.tags     = calloc_fn(md->tag_vector.capacity, sizeof(metadata_tag_t));
     if (!md->tag_vector.tags)
     {
         fprintf(stderr, "Failed to allocate memory for: tags\n");
@@ -152,30 +151,30 @@ int cbz_free_metadata(cbz_metadata_t *md)
         return STATUS_ERR;
     }
 
-    free(md->title);
+    free_fn(md->title);
     md->title = NULL;
 
-    free(md->series);
+    free_fn(md->series);
     md->series = NULL;
 
-    free(md->author);
+    free_fn(md->author);
     md->author = NULL;
 
-    free(md->publisher);
+    free_fn(md->publisher);
     md->publisher = NULL;
 
     md->year      = (uint16_t)CBZ_DEFAULT_YEAR;
     md->month     = (uint8_t)CBZ_DEFAULT_MONTH;
     md->day       = (uint8_t)CBZ_DEFAULT_DAY;
 
-    free(md->language);
+    free_fn(md->language);
     md->language = NULL;
 
-    free(md->description);
+    free_fn(md->description);
     md->description = NULL;
 
     // Probably need to free each individual tag as well.
-    free(md->tag_vector.tags);
+    free_fn(md->tag_vector.tags);
     md->tag_vector.tags     = NULL;
     md->tag_vector.capacity = 0;
     md->tag_vector.length   = 0;
