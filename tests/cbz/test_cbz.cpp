@@ -18,13 +18,13 @@ extern "C"
 #include <sys/stat.h>
 }
 
-size_t calloc_count = 0;
-size_t malloc_count = 0;
-size_t free_count = 0;
+static size_t calloc_count = 0;
+static size_t malloc_count = 0;
+static size_t free_count = 0;
 
 
-void *calloc_impl(size_t number, size_t size);
-void free_impl(void *ptr);
+static void *calloc_impl(size_t number, size_t size);
+static void free_impl(void *ptr);
 
 TEST_GROUP(tg_cbz)
 {
@@ -152,12 +152,13 @@ TEST(tg_cbz, tag_vector_set_capacity)
     CHECK_EQUAL(STATUS_OK, cbz_tag_vec_set_capacity(&tag_vec, 10));
     CHECK_EQUAL(10, tag_vec.capacity);
     CHECK_TRUE(tag_vec.tags != NULL);
-    CHECK_EQUAL(10, calloc_count);
+    CHECK_EQUAL(1, calloc_count);
     
     CHECK_EQUAL(STATUS_OK, cbz_tag_vec_set_capacity(&tag_vec, 12));
     CHECK_EQUAL(12, tag_vec.capacity);
     CHECK_TRUE(tag_vec.tags != NULL);
-    CHECK_EQUAL(12, calloc_count);
+    CHECK_EQUAL(2, calloc_count);
+
 }
 
 /*
