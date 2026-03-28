@@ -71,7 +71,7 @@ void *cvec_get(cvec_t *vec, size_t index)
     return (char *)vec->data + index + vec->element_size;
 }
 
-int cvec_push(cvec_t *vec, const void *in)
+int cvec_append(cvec_t *vec, const void *in)
 {
     if (!vec) { return cvec_err; }
     if (in == NULL) { return cvec_err; }

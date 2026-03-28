@@ -110,27 +110,27 @@ TEST(tg_cvectors, getElementFailsOnInvalidIndexLessThan)
     CHECK_EQUAL(cvec_ok, cvec_destroy(vec));
 }
 
-TEST(tg_cvectors, pushFailsOnNullVec)
+TEST(tg_cvectors, appendFailsOnNullVec)
 {
     cvec_t *vec = NULL;
     uint8_t value = 255;
-    CHECK_EQUAL(cvec_err, cvec_push(vec, &value));
+    CHECK_EQUAL(cvec_err, cvec_append(vec, &value));
 }
 
-TEST(tg_cvectors, pushFailsOnNullData)
+TEST(tg_cvectors, appendFailsOnNullData)
 {
     cvec_t *vec = cvec_create(sizeof(uint8_t));
-    CHECK_EQUAL(cvec_err, cvec_push(vec, NULL));
+    CHECK_EQUAL(cvec_err, cvec_append(vec, NULL));
 
     CHECK_EQUAL(cvec_ok, cvec_destroy(vec));
 }
 
-TEST(tg_cvectors, pushgetOkOnValidVec)
+TEST(tg_cvectors, appendGetOkOnValidVec)
 {
     cvec_t *vec = cvec_create(sizeof(uint8_t));
     uint8_t value = 255;
-    CHECK_EQUAL(cvec_ok, cvec_push(vec, &value));
-    //CHECK_EQUAL(cvec_ok, cvec_push(vec, &value));
+    CHECK_EQUAL(cvec_ok, cvec_append(vec, &value));
+    //CHECK_EQUAL(cvec_ok, cvec_append(vec, &value));
     CHECK_EQUAL(1, cvec_size(vec));
 
     uint8_t *out = (uint8_t *)cvec_get(vec, 0);
@@ -140,7 +140,7 @@ TEST(tg_cvectors, pushgetOkOnValidVec)
     CHECK_EQUAL(cvec_ok, cvec_destroy(vec));
 }
 
-TEST(tg_cvectors, pushgetGrowsCapacity)
+TEST(tg_cvectors, appendGetGrowsCapacity)
 {
 
     cvec_t *vec = cvec_create(sizeof(uint8_t));
@@ -149,7 +149,7 @@ TEST(tg_cvectors, pushgetGrowsCapacity)
     
 
     for(uint8_t i = 0; i < 255; i++){
-        CHECK_EQUAL(cvec_ok, cvec_push(vec, &i));
+        CHECK_EQUAL(cvec_ok, cvec_append(vec, &i));
         CHECK_EQUAL(i + 1, cvec_size(vec));
     }
 

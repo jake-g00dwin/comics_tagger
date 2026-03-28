@@ -57,7 +57,7 @@ extern "C"
     int                   cvec_destroy(cvec_t *vec);
 
     void                 *cvec_get(cvec_t *vec, size_t index);
-    int                   cvec_push(cvec_t *vec, const void *in);
+    int                   cvec_append(cvec_t *vec, const void *in);
     int                   cvec_pop(cvec_t *vec, int *out);
 
     size_t                cvec_size(cvec_t *vec);
