@@ -12,6 +12,7 @@ if(NOT UNIT_TESTING)
         ${CMAKE_SOURCE_DIR}/inc/
     )
     target_link_libraries(cbz
+        mem
         zip 
     )
 
@@ -22,6 +23,7 @@ if(NOT UNIT_TESTING)
 else()
     target_include_directories(cbz PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_SOURCE_DIR}/inc/
         #First we include any module specific test dependencies.
         ${CMAKE_SOURCE_DIR}/tests/cbz/mocks/
         ${CMAKE_SOURCE_DIR}/tests/cbz/fakes/
@@ -36,6 +38,7 @@ else()
 
     #Place Mocked/Regular dependencies here for unit testing.
     target_link_libraries(cbz
+        mem_mock 
         zip 
     )
 

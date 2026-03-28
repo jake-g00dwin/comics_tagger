@@ -6,17 +6,117 @@
  */
 
 #include "cbz.h"
+#include "mem.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
-
 // #include <uchar.h>
-
 #include <zip.h>
+
+// Constants
+
+// Globals and Function Pointer assignments.
+
+// Default implimentation assignments.
+void *(*calloc_fn)(size_t number, size_t size) = calloc;
+void *(*malloc_fn)(size_t size) = malloc;
+void (*free_fn)(void *ptr)                     = free;
+
+// Helper(Private) Functions
+
+int init_metadata_title(cbz_metadata_t *md)
+{
+    // md->title = calloc(CBZ_MAX_TITLE_LEN, sizeof(char));
+    md->title = calloc_fn(CBZ_MAX_TITLE_LEN, sizeof(char));
+    if (!md->title)
+    {
+        fprintf(stderr, "Failed to allocate memory for: title\n");
+        return STATUS_ERR;
+    }
+    strcpy(md->title, "default_title");
+    return STATUS_OK;
+}
+
+int init_metadata_series(cbz_metadata_t *md)
+{
+    md->series = calloc_fn(CBZ_DEFAULT_FIELD_LEN, sizeof(char));
+    if (!md->series)
+    {
+        fprintf(stderr, "Failed to allocate memory for: series\n");
+        return STATUS_ERR;
+    }
+    return STATUS_OK;
+}
+
+int init_metadata_author(cbz_metadata_t *md)
+{
+    md->author = calloc_fn(CBZ_MAX_AUTHOR_LEN, sizeof(char));
+    if (!md->author)
+    {
+        fprintf(stderr, "Failed to allocate memory for: author\n");
+        return STATUS_ERR;
+    }
+    return STATUS_OK;
+}
+
+int init_metadata_publisher(cbz_metadata_t *md)
+{
+    md->publisher = calloc_fn(CBZ_DEFAULT_FIELD_LEN, sizeof(char));
+    if (!md->publisher)
+    {
+        fprintf(stderr, "Failed to allocate memory for: publisher\n");
+        return STATUS_ERR;
+    }
+    return STATUS_OK;
+}
+
+void init_metadata_date(cbz_metadata_t *md)
+{
+    md->year  = (uint16_t)CBZ_DEFAULT_YEAR;
+    md->month = (uint8_t)CBZ_DEFAULT_MONTH;
+    md->day   = (uint8_t)CBZ_DEFAULT_DAY;
+}
+
+int init_metadata_language(cbz_metadata_t *md)
+{
+    md->language = calloc(CBZ_MAX_LANG_LEN, sizeof(char));
+    if (!md->language)
+    {
+        fprintf(stderr, "Failed to allocate memory for: language\n");
+        return STATUS_ERR;
+    }
+    strcpy(md->language, "english");
+    return STATUS_OK;
+}
+
+int init_metadata_description(cbz_metadata_t *md)
+{
+    md->description = calloc(CBZ_MAX_DESC_LEN, sizeof(char));
+    if (!md->description)
+    {
+        fprintf(stderr, "Failed to allocate memory for: description\n");
+        return STATUS_ERR;
+    }
+    return STATUS_OK;
+}
+
+int init_metadata_tags(cbz_metadata_t *md)
+{
+    md->tag_vector.length   = 0;
+    md->tag_vector.capacity = CBZ_DEFAULT_TAGVEC_CAP;
+    md->tag_vector.tags     = calloc(md->tag_vector.capacity, sizeof(metadata_tag_t));
+    if (!md->tag_vector.tags)
+    {
+        fprintf(stderr, "Failed to allocate memory for: tags\n");
+        return STATUS_ERR;
+    }
+    return STATUS_OK;
+}
+
+// Public facing functions.
 
 int cbz_init_metadata(cbz_metadata_t *md)
 {
@@ -26,63 +126,19 @@ int cbz_init_metadata(cbz_metadata_t *md)
         return STATUS_ERR;
     }
 
-    md->title = calloc(CBZ_MAX_TITLE_LEN, sizeof(char));
-    if (!md->title)
-    {
-        fprintf(stderr, "Failed to allocate memory for: title\n");
-        return STATUS_ERR;
-    }
-    strcpy(md->title, "default_title");
+    if (init_metadata_title(md) != STATUS_OK) { return STATUS_ERR; }
+    if (init_metadata_series(md) != STATUS_OK) { return STATUS_ERR; }
+    if (init_metadata_author(md) != STATUS_OK) { return STATUS_ERR; }
+    if (init_metadata_publisher(md) != STATUS_OK) { return STATUS_ERR; }
 
-    md->series = calloc(CBZ_DEFAULT_FIELD_LEN, sizeof(char));
-    if (!md->series)
-    {
-        fprintf(stderr, "Failed to allocate memory for: series\n");
-        return STATUS_ERR;
-    }
+    init_metadata_date(md);
 
-    md->author = calloc(CBZ_MAX_AUTHOR_LEN, sizeof(char));
-    if (!md->author)
-    {
-        fprintf(stderr, "Failed to allocate memory for: author\n");
-        return STATUS_ERR;
-    }
+    if (init_metadata_language(md) != STATUS_OK) { return STATUS_ERR; }
+    if (init_metadata_description(md) != STATUS_OK) { return STATUS_ERR; }
 
-    md->publisher = calloc(CBZ_DEFAULT_FIELD_LEN, sizeof(char));
-    if (!md->publisher)
-    {
-        fprintf(stderr, "Failed to allocate memory for: publisher\n");
-        return STATUS_ERR;
-    }
+    md->issue = (uint16_t)CBZ_DEFAULT_ISSUE;
 
-    md->year     = (uint16_t)CBZ_DEFAULT_YEAR;
-    md->month    = (uint8_t)CBZ_DEFAULT_MONTH;
-    md->day      = (uint8_t)CBZ_DEFAULT_DAY;
-    md->issue    = (uint16_t)CBZ_DEFAULT_ISSUE;
-
-    md->language = calloc(CBZ_MAX_LANG_LEN, sizeof(char));
-    if (!md->language)
-    {
-        fprintf(stderr, "Failed to allocate memory for: language\n");
-        return STATUS_ERR;
-    }
-    strcpy(md->language, "english");
-
-    md->description = calloc(CBZ_MAX_DESC_LEN, sizeof(char));
-    if (!md->description)
-    {
-        fprintf(stderr, "Failed to allocate memory for: description\n");
-        return STATUS_ERR;
-    }
-
-    md->tag_vector.length   = 0;
-    md->tag_vector.capacity = CBZ_DEFAULT_TAGVEC_CAP;
-    md->tag_vector.tags     = calloc(md->tag_vector.capacity, sizeof(metadata_tag_t));
-    if (!md->tag_vector.tags)
-    {
-        fprintf(stderr, "Failed to allocate memory for: tags\n");
-        return STATUS_ERR;
-    }
+    if (init_metadata_tags(md) != STATUS_OK) { return STATUS_ERR; }
 
     md->is_initialized = true;
     return STATUS_OK;
@@ -141,9 +197,3 @@ int cbz_create(cbz_t *cbz, const char *path)
 
     return 0;
 }
-
-// Default implimentation for function pointers.
-
-// void *(fp_malloc)(size_t size) = malloc;
-//void *(*fp_malloc)(size_t size)                = malloc;
-//void *(*fp_calloc)(size_t number, size_t size) = calloc;

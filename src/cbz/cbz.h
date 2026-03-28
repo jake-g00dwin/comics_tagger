@@ -114,22 +114,10 @@ extern "C"
     int cbz_init_metadata(cbz_metadata_t *md);
     int cbz_free_metadata(cbz_metadata_t *md);
 
-    /*
-    cbz_t cbz_new(void);
-    int    cbz_create(cbz_t *cbz);
-    int    cbz_write(void);
-    int    cbz_open(void);
-    int    cbz_get_metadata(void);
-    int    cbz_set_metadata(void);
-    int    cbz_get_image(size_t page_index);
-    size_t cbz_get_size(void);
-    int get_cbz_data(void);
-    */
-
-    // These functions pointers should be used to wrap the malloc/calloc funcs.
-
-    extern void **(fp_malloc)(size_t size);
-    extern void **(fp_calloc)(size_t number, size_t size);
+    // Externally defined function pointer.
+    extern void *(*malloc_fn)(size_t size);
+    extern void *(*calloc_fn)(size_t number, size_t size);
+    extern void (*free_fn)(void *ptr);
 
 #ifdef __cplusplus
 }
