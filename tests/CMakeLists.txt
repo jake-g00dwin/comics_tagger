@@ -1,6 +1,7 @@
 project(Tests)
 
 # TEST_DIRS
+add_subdirectory(cvectors)
 add_subdirectory(cbz)
 add_subdirectory(simple_test)
 
@@ -15,6 +16,7 @@ add_executable(AllTests
 target_link_libraries(AllTests
     ${CPPUTEST_LIBRARIES}
     # TEST_LINKS
+    test_cvectors
     test_cbz
     simple_test
 )
