@@ -11,4 +11,3 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 # This line was from the documentation but doesn't seem to work for me.
 #target_link_libraries(${PROJECT_NAME} wxWidgets::wxWidgets)
 add_subdirectory(cbz)
-add_subdirectory(mem)
