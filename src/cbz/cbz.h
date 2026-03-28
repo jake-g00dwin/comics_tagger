@@ -114,6 +114,9 @@ extern "C"
     int cbz_init_metadata(cbz_metadata_t *md);
     int cbz_free_metadata(cbz_metadata_t *md);
 
+    int cbz_tag_vec_init(metadata_tag_vec_t *tag_vec);
+    int cbz_tag_vec_set_capacity(metadata_tag_vec_t *tag_vec, size_t capacity);
+
     // Externally defined function pointer.
     extern void *(*malloc_fn)(size_t size);
     extern void *(*calloc_fn)(size_t number, size_t size);

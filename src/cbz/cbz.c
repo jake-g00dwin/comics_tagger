@@ -184,15 +184,36 @@ int cbz_free_metadata(cbz_metadata_t *md)
 
 int cbz_create(cbz_t *cbz, const char *path)
 {
-    zip_t        *archive;
-    zip_error_t  *zip_err;
-    zip_source_t *zip_src;
+    // zip_t        *archive;
+    // zip_error_t  *zip_err;
+    // zip_source_t *zip_src;
 
-    int           error;
+    // int           error;
 
     // Create the archive if it doesn't exist, throw error if it does.
-    archive = zip_open(path, ZIP_CREATE | ZIP_EXCL, &error);
+    // archive = zip_open(path, ZIP_CREATE | ZIP_EXCL, &error);
     // archive = zip_open_from_source(zip_src,ZIP_CREATE|ZIP_EXCL , zip_err);
 
     return 0;
+}
+
+int cbz_tag_vec_init(metadata_tag_vec_t *tag_vec)
+{
+    if (!tag_vec)
+    {
+        return STATUS_ERR;
+    }
+
+    tag_vec->tags     = NULL;
+    tag_vec->length   = 0;
+    tag_vec->capacity = 0;
+
+    return STATUS_OK;
+}
+
+int cbz_tag_vec_set_capacity(metadata_tag_vec_t *tag_vec, size_t capacity)
+{
+    tag_vec->capacity = capacity;
+    tag_vec->tags     = calloc_fn(capacity, sizeof(metadata_tag_t));
+    return STATUS_OK;
 }
