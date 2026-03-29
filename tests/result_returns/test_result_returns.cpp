@@ -24,15 +24,26 @@ TEST_GROUP(tg_result_returns)
     }
 };
 
-TEST(tg_result_returns, FirstTest)
+TEST(tg_result_returns, inttypeworks)
 {
-   FAIL("Fail me!");
+    int a = 8;
+    result_int_t result_int = add_two(a);
+    if(!result_int.is_ok){
+        FAIL("Issues, status is not okay.");
+    }
+    CHECK_EQUAL(8+2, result_int.value);
 }
 
-TEST(tg_result_returns, SecondTest)
+TEST(tg_result_returns, inttypeworks_err)
 {
-   STRCMP_EQUAL("hello", "world");
-   LONGS_EQUAL(1, 2);
-   CHECK(false);
+    int a = 40;
+    result_int_t result_int = add_two(a);
+    if(!result_int.is_ok){
+        CHECK_EQUAL(42, a + 2);
+        CHECK_EQUAL(-1, result_int.error);
+    }
+    else{
+    FAIL("Incorrect status type.");
+    }
 }
 
