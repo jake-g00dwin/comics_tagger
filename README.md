@@ -21,7 +21,12 @@ For the moment it uses the xml format to handle this.
 - libzip
 - sqlite
 - openmp?
-   
+
+## Modules
+
+- `cbz.h`:: Compressed comic archive
+- `cvectors.h`:: C Dynamic memory vectors implimentation.
+- `result_returns.h`:: Gives more comperhensive return, error and return system.
 
 
 ## Roadmap
@@ -53,3 +58,11 @@ For the moment it uses the xml format to handle this.
 
 ## Instructions
 
+The build process is automated using the `otto.sh` shell script in the 
+projects root directory.
+
+
+```sh
+chmod +x ./otto.sh
+./otto.sh #Follow on-screen instructions.
+```
