@@ -6,7 +6,6 @@
  */
 
 #include "module_name.h"
-#include "RegEdit.h"
 
 // dumb test function
 int add_two(int a)
