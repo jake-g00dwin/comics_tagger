@@ -12,13 +12,7 @@ if(NOT UNIT_TESTING)
         ${CMAKE_SOURCE_DIR}/inc/
     )
     target_link_libraries(module_name
-        RegEdit
-    )
-
-    #These get defined in the toolchain files.
-    target_compile_options(module_name PUBLIC
-        ${OBJECT_GEN_FLAGS}
-        ${C_FLAGS_ARCH}
+        #Put linked libs here.
     )
 
 else()
@@ -37,6 +31,6 @@ else()
     )
     #Place Mocked/Regular dependencies here for unit testing.
     target_link_libraries(module_name
-        MockRegEdit
+        #Put linked libs here.
     )
 endif()
