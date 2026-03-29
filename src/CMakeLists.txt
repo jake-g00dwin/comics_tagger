@@ -12,3 +12,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 #target_link_libraries(${PROJECT_NAME} wxWidgets::wxWidgets)
 add_subdirectory(cbz)
 add_subdirectory(cvectors)
+add_subdirectory(result_returns)
