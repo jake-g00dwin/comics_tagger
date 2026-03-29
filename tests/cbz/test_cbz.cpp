@@ -12,7 +12,6 @@
 extern "C" 
 {
 #include "cbz.h"
-//#include "mem_mock.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
