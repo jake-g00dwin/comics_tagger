@@ -124,17 +124,58 @@ result_int_t cvec_append(cvec_t *vec, const void *in)
     return OK(status_std_ok, result_int_t);
 }
 
-int cvec_pop(cvec_t *vec, int *out)
+result_int_t cvec_pop(cvec_t *vec, void *out)
 {
-    return result_ok;
+    if (!vec) { return ERR(status_std_null_ptr, result_int_t); }
+    if (!out) { return ERR(status_std_invalid_arg, result_int_t); }
+    if (vec->size <= 0) { return ERR(status_std_err, result_int_t); }
+
+    void *src_data = (char *)vec->data + (vec->size * vec->element_size);
+    memcpy(out, src_data, vec->element_size);
+    vec->size -= 1;
+
+    return OK(status_std_ok, result_int_t);
 }
 
-int cvec_insert(cvec_t *vec, const void *in, size_t index)
+result_int_t cvec_insert(cvec_t *vec, const void *in, size_t index)
 {
-    return result_ok;
+    return OK(status_std_ok, result_int_t);
 }
 
-int cvec_clear_vector(cvec_t *vec)
+result_int_t cvec_clear_vector(cvec_t *vec)
 {
-    return result_ok;
+    return OK(status_std_ok, result_int_t);
+}
+
+result_cvec_pt cvec_clone(cvec_t *vec)
+{
+    if (!vec) { return ERR(status_std_null_ptr, result_cvec_pt); }
+    result_cvec_pt rcv = cvec_create(vec->element_size);
+
+    // If the creation failed we just pass it along.
+    if (!rcv.is_ok) { return rcv; }
+
+    // First free the default data.
+    free_fn(rcv.value->data);
+
+    // Copy the size and capacity into new clone.
+    rcv.value->size     = vec->size;
+    rcv.value->capacity = vec->capacity;
+
+    rcv.value->data     = calloc_fn(vec->capacity, vec->element_size);
+
+    // Check for alloc failure.
+    if (!rcv.value->data)
+    {
+        // First free the newly created vector.
+        free_fn(rcv.value);
+        return ERR(status_std_alloc_failure, result_cvec_pt);
+    }
+
+    memcpy(rcv.value->data, vec->data, (vec->capacity * vec->element_size));
+
+    // void *i_addr = (char *)i_addr + (i * vec->element_size);
+
+    return rcv;
+    // return OK(rcv.value, result_cvec_pt);
 }
