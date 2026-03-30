@@ -16,6 +16,7 @@ extern "C"
 {
 #endif
 
+#include "result_returns.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -25,6 +26,8 @@ extern "C"
 #endif
 
     typedef struct cvec_t cvec_t;
+
+    DEFINE_RESULT(cvec_t *, result_cvec_pt)
 
     typedef enum
     {
@@ -36,6 +39,7 @@ extern "C"
         result_invalid_element_ptr = 5,
     } result_status;
 
+    /*
     typedef struct
     {
         result_status status;
@@ -46,7 +50,9 @@ extern "C"
             int    error;
         };
     } result_t;
+    */
 
+    /*
     typedef struct
     {
         result_status status;
@@ -56,7 +62,9 @@ extern "C"
             int    error;
         };
     } result_size_t;
+    */
 
+    /*
     typedef struct
     {
         result_status status;
@@ -66,6 +74,7 @@ extern "C"
             int     error;
         };
     } result_cvec_t;
+    */
 
     /**
      * @brief Creates new vector in dynamic memory.
@@ -73,7 +82,7 @@ extern "C"
      * @return C vector type(`cvec_t`), initialized to CVEC_DEFAULT_CAPACITY that is allocated.
      * @see cvec_t The C vector structure type.
      */
-    cvec_t *cvec_create(size_t element_size);
+    result_cvec_pt cvec_create(size_t element_size);
 
     /**
      * @brief Destroy's and frees all used memory allocated by the vector.
@@ -82,7 +91,7 @@ extern "C"
      * The function frees the data allocated to the data field as well as the
      * vector structure itself.
      */
-    int cvec_destroy(cvec_t *vec);
+    result_int_t cvec_destroy(cvec_t *vec);
 
     /**
      * @brief Gets a indexed values address from the passed vector.
@@ -91,7 +100,7 @@ extern "C"
      * @return A void pointer to the indexed element.
      * On failure the function returns NULL.
      */
-    void *cvec_get(cvec_t *vec, size_t index);
+    result_void_pt cvec_get(cvec_t *vec, size_t index);
 
     /**
      * @brief Appends passed value onto the end of the vector.
@@ -100,7 +109,7 @@ extern "C"
      * @return Status code.
      * The two passed parameter's must be valid non-null addresses.
      */
-    int cvec_append(cvec_t *vec, const void *in);
+    result_int_t cvec_append(cvec_t *vec, const void *in);
 
     /**
      * @brief Pops last element off the vector.
@@ -179,7 +188,7 @@ extern "C"
      * more memory and copies over the elements from the previous address if
      * needed.
      */
-    size_t cvec_capacity(cvec_t *vec);
+    result_size_t cvec_capacity(cvec_t *vec);
 
     // Externally defined function pointer.
     /**

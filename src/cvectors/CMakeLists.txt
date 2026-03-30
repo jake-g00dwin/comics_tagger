@@ -18,6 +18,7 @@ if(NOT UNIT_TESTING)
 else()
     target_include_directories(cvectors PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_SOURCE_DIR}/inc/
         #First we include any module specific test dependencies.
         ${CMAKE_SOURCE_DIR}/tests/cvectors/mocks/
         ${CMAKE_SOURCE_DIR}/tests/cvectors/fakes/

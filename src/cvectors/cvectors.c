@@ -19,68 +19,87 @@ struct cvec_t
     size_t element_size; /**<The size of the data elements in vector.*/
 };
 
-cvec_t *cvec_create(size_t element_size)
+result_cvec_pt cvec_create(size_t element_size)
 {
-    if (element_size <= 0) { return NULL; }
+    // Check if the input argument is valid.
+    if (element_size <= 0) { return ERR(status_std_invalid_arg, result_cvec_pt); }
 
     cvec_t *vec_ptr = malloc_fn(sizeof(cvec_t));
-    if (!vec_ptr) { return NULL; }
+    // Check if the memory was sucessfully allocated.
+    if (!vec_ptr)
+    {
+        return ERR(status_std_alloc_failure, result_cvec_pt);
+    }
 
+    // Initialize the vector to defaults.
     vec_ptr->element_size = element_size;
     vec_ptr->size         = 0;
     vec_ptr->capacity     = CVEC_DEFAULT_CAPACITY;
     vec_ptr->data         = calloc_fn(CVEC_DEFAULT_CAPACITY, element_size);
-    return vec_ptr;
+    // return vec_ptr;
+    return OK(vec_ptr, result_cvec_pt);
 }
 
-int cvec_destroy(cvec_t *vec)
+result_int_t cvec_destroy(cvec_t *vec)
 {
-    if (vec->data == NULL) { return result_err; }
+    if (vec == NULL)
+    {
+        return ERR(status_std_null_ptr, result_int_t);
+    }
+
     free_fn(vec->data);
     vec->data = NULL;
 
-    if (vec == NULL) { return result_err; }
     free_fn(vec);
+    vec = NULL;
 
-    return result_ok;
+    return OK(0, result_int_t);
 }
 
 result_size_t cvec_size(cvec_t *vec)
 {
-    result_size_t r_size = {.status = result_ok, .error = 0};
     if (!vec)
     {
-        r_size.status = result_invalid_vector_ptr;
-        r_size.error  = result_invalid_index_err;
-        return r_size;
+        return ERR(status_std_null_ptr, result_size_t);
+    }
+    return OK(vec->size, result_size_t);
+}
+
+result_size_t cvec_capacity(cvec_t *vec)
+{
+    if (!vec)
+    {
+        return ERR(status_std_null_ptr, result_size_t);
+    }
+    return OK(vec->capacity, result_size_t);
+}
+
+// void *cvec_get(cvec_t *vec, size_t index)
+result_void_pt cvec_get(cvec_t *vec, size_t index)
+{
+    if (!vec)
+    {
+        return ERR(status_std_null_ptr, result_void_pt);
+    }
+    if (index >= vec->size)
+    {
+        return ERR(status_std_invalid_arg, result_void_pt);
     }
 
-    r_size.status = result_ok;
-    r_size.value  = vec->size;
-    return r_size;
-}
-
-size_t cvec_capacity(cvec_t *vec)
-{
-    if (!vec) { return result_err; }
-    // if (vec->data == NULL) { return result_err; }
-    return vec->capacity;
-}
-
-void *cvec_get(cvec_t *vec, size_t index)
-{
-    if (!vec) { return NULL; }
-    if (index >= vec->size) { return NULL; }
     // data_address + (index * size_of_data_type)
 
     // We need to use byte level pointer arithmatic to avoid compiler extensions.
-    return (char *)vec->data + index + vec->element_size;
+    // return (char *)vec->data + index + vec->element_size;
+    return OK(
+        (char *)vec->data + index + vec->element_size,
+        result_void_pt);
 }
 
-int cvec_append(cvec_t *vec, const void *in)
+result_int_t cvec_append(cvec_t *vec, const void *in)
 {
-    if (!vec) { return result_err; }
-    if (in == NULL) { return result_err; }
+    // Check that the input's are valid aka not NULL.
+    if (!vec) { return ERR(status_std_null_ptr, result_int_t); }
+    if (!in) { return ERR(status_std_invalid_arg, result_int_t); }
 
     vec->size += 1;
 
@@ -88,7 +107,7 @@ int cvec_append(cvec_t *vec, const void *in)
     if (vec->size > vec->capacity)
     {
         void *tmp_data = calloc_fn(vec->capacity * 2, vec->element_size);
-        if (!tmp_data) { return result_err; }
+        if (!tmp_data) { return ERR(status_std_alloc_failure, result_int_t); }
 
         memcpy((char *)tmp_data,
                (char *)vec->data,
@@ -102,7 +121,7 @@ int cvec_append(cvec_t *vec, const void *in)
            in,
            vec->element_size);
 
-    return result_ok;
+    return OK(status_std_ok, result_int_t);
 }
 
 int cvec_pop(cvec_t *vec, int *out)
