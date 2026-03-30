@@ -18,6 +18,7 @@ if(NOT UNIT_TESTING)
 else()
     target_include_directories(module_name PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_SOURCE_DIR}/inc/
         #First we include any module specific test dependencies.
         ${CMAKE_SOURCE_DIR}/tests/module_name/mocks/
         ${CMAKE_SOURCE_DIR}/tests/module_name/fakes/
