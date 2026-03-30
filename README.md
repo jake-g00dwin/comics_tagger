@@ -34,8 +34,8 @@ For the moment it uses the xml format to handle this.
 ## Modules
 
 - `cbz.h`:: Compressed comic archive
-- `cvectors.h`:: C Dynamic memory vectors implimentation.
-- `result_returns.h`:: Gives more comperhensive return, error and return system.
+- `cvectors.h`:: C Dynamic memory vectors implementation.
+- `result_returns.h`:: Gives more comprehensive return, error and return system.
 
 
 ## Roadmap
@@ -64,7 +64,7 @@ For the moment it uses the xml format to handle this.
 - [ ] Reverse image search.
 - [ ] Automatic tag extractor(modular)
 - [ ] User adjustable memory caching.
-- [ ] Add multilanguage GUI support.
+- [ ] Add multi language GUI support.
 
 ## Instructions
 
@@ -82,7 +82,7 @@ chmod +x ./otto.sh
 **Q:** Doesn't a program already exist for this?
 
 **A:** Yes, most of them use interpreted languages, lack OS support for things
-like FreeBSD, MacOS and rely on dead/unavailble packages...also they are slow.
+like FreeBSD, MacOS and rely on dead/unavailable packages...also they are slow.
 
 
 **Q:** Why are you using C?
@@ -94,13 +94,13 @@ spend all my time fighting bindings that don't quite work correctly.
 
 **Q:** I found a problem with the program but I don't code, how can I help?
 
-**A:** If you see somethign that you haven't already found under issues you can
+**A:** If you see something that you haven't already found under issues you can
 make a new one to let me know.
 
 
 **Q:** Why don't you write it in \<your language here\>?
 
-**A:** Speed, compatability, portability. Also library support, becuase I'll 
+**A:** Speed, compatibility, portability. Also library support, because I'll 
 probably hit the fetal position if I have to use rust FFI or some bindings
 crate/package that will be abandoned in 0.05 Seconds after I've stated using it.
 
