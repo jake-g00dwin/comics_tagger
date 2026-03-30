@@ -23,7 +23,6 @@ extern "C"
 #include <stddef.h>
 #include <stdint.h>
 
-
 /**
  * @brief Ok status return macro.
  * @param[in] val The value of the result type to return.
@@ -39,7 +38,7 @@ extern "C"
 #define ERR(err, type) ((type){.is_ok = false, .error = (err)})
 
 /**
- * @brief Macro `DEFINE_RESULT` creates new result type for verbose returns. 
+ * @brief Macro `DEFINE_RESULT` creates new result type for verbose returns.
  * @param[in] T The type of the value it should hold on ok returns.
  * @param[in] name The new typedef name to use for the created result type.
  *
@@ -53,7 +52,7 @@ extern "C"
 #define DEFINE_RESULT(T, name) \
     typedef struct             \
     {                          \
-        bool is_ok;             \
+        bool is_ok;            \
         union                  \
         {                      \
             T   value;         \
@@ -61,15 +60,24 @@ extern "C"
         };                     \
     } name;
 
-
-// Typedefs, structures and custom types.
+    // Typedefs, structures and custom types.
     typedef enum
     {
         status_std_ok = 0,
         status_std_err,
         status_std_null_ptr,
         status_std_invalid_arg,
+        status_std_alloc_failure,
     } result_std_status;
+
+    /**
+     * @brief Simple no value return type, used in palce of bools.
+     */
+    typedef struct
+    {
+        bool is_okay;
+        int  error;
+    } result_t;
 
     // Built-in Result Types.
     DEFINE_RESULT(int, result_int_t)
@@ -90,17 +98,15 @@ extern "C"
     DEFINE_RESULT(int32_t, result_i32_t)
     DEFINE_RESULT(int64_t, result_i64_t)
 
-
     // Pointer result types.
     DEFINE_RESULT(void *, result_void_pt)
     DEFINE_RESULT(int *, result_i_pt)
-    DEFINE_RESULT(unsigned int*, result_ui_pt)
+    DEFINE_RESULT(unsigned int *, result_ui_pt)
     DEFINE_RESULT(char *, result_char_pt)
-    DEFINE_RESULT(float*, result_float_pt)
+    DEFINE_RESULT(float *, result_float_pt)
 
+    // Function Prototypes.
 
-    //Function Prototypes.
-    
     /**
      * @brief A simple test function, don't use.
      */
