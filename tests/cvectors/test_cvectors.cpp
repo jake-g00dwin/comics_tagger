@@ -347,7 +347,7 @@ TEST(tg_cvec_populated, cloneFailsOnNullVector)
     CHECK_FALSE(rcv.is_ok);
 }
 
-TEST(tg_cvec_populated, cloneHandlesFailedAlloc)
+TEST(tg_cvec_populated, cloneHandlesFailedVecAlloc)
 {
     fail_after = 0;
     result_cvec_pt rcv = cvec_clone(vec_ptr);
@@ -359,6 +359,42 @@ TEST(tg_cvec_populated, cloneHandlesFailedAlloc)
     }
 }
 
+TEST(tg_cvec_populated, cloneHandlesFailedDataAlloc)
+{
+    //The second allocation takes place for the data of the cloned vec.
+    fail_after = 1;
+    result_cvec_pt rcv = cvec_clone(vec_ptr);
+    CHECK_FALSE(rcv.is_ok);
+    CHECK_EQUAL(status_std_alloc_failure, rcv.error);
 
+    if(rcv.is_ok){
+        cvec_destroy(rcv.value);
+    }
+}
+
+TEST(tg_cvec_populated, cloneHasCorrectShape)
+{
+    result_cvec_pt rcv = cvec_clone(vec_ptr);
+    CHECK_TRUE(rcv.is_ok);
+    CHECK_EQUAL(cvec_size(vec_ptr).value, cvec_size(rcv.value).value);
+    CHECK_EQUAL(cvec_capacity(vec_ptr).value, cvec_capacity(rcv.value).value);
+
+    if(rcv.is_ok){
+        cvec_destroy(rcv.value);
+    }
+}
+
+TEST(tg_cvec_populated, cloneHasCorrectData)
+{
+    result_cvec_pt rcv = cvec_clone(vec_ptr);
+    CHECK_TRUE(rcv.is_ok);
+
+    for(size_t i = 0; i < cvec_size(vec_ptr).value; i++){
+        //Equivalent: CHECK_EQUAL(vec_ptr[i] == rcv[i])
+        CHECK_EQUAL(*(uint8_t *)(cvec_get(vec_ptr, i).value), *(uint8_t *)(cvec_get(rcv.value, i).value));
+    }
+
+    cvec_destroy(rcv.value);
+}
 
 
