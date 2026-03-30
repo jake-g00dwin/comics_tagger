@@ -48,6 +48,8 @@ void *calloc_impl(size_t number, size_t size)
     {
         fail_after_count += 1;
         if(fail_after <= fail_after_count){
+            //reset the failure mode.
+            fail_after = -1;
             return NULL;
         }
     }
@@ -63,6 +65,8 @@ void *malloc_impl(size_t size)
     {
         fail_after_count += 1;
         if(fail_after <= fail_after_count){
+            //reset the failure mode.
+            fail_after = -1;
             return NULL;
         }
     }
@@ -238,13 +242,29 @@ TEST(tg_cvectors, appendGetGrowsCapacity)
     CHECK_TRUE(cvec_destroy(vec).is_ok);
 }
 
-TEST(tg_cvectors, popFailsOnEmptyVector)
-{
-
-}
-
 TEST(tg_cvectors, popFailsOnNullVector)
 {
+    uint8_t out_val = 0;
+    result_int_t ri = cvec_pop(NULL, &out_val);
+    CHECK_FALSE(ri.is_ok);
+    CHECK_EQUAL(status_std_null_ptr, ri.error);
+}
+
+TEST(tg_cvectors, popFailsOnNullOut)
+{
+    cvec_t *vec = cvec_create(sizeof(uint8_t)).value;
+    result_int_t ri = cvec_pop(vec, NULL);
+    CHECK_FALSE(ri.is_ok);
+    CHECK_EQUAL(status_std_invalid_arg, ri.error);
+}
+
+TEST(tg_cvectors, popFailsOnEmptyVector)
+{
+    cvec_t *vec = cvec_create(sizeof(uint8_t)).value;
+    uint8_t out_val = 0;
+
+    result_int_t ri = cvec_pop(vec, &out_val);
+    CHECK_FALSE(ri.is_ok);
 
 }
 
@@ -271,6 +291,8 @@ TEST_GROUP(tg_cvec_populated)
         calloc_count = 0;
         malloc_count = 0;
         free_count = 0;
+        fail_after = -1;
+        fail_after_count = 0;
     }
     void teardown()
     {
@@ -291,6 +313,7 @@ TEST(tg_cvec_populated, appendHandlesFailedAlloc)
     //Append until it will attempts to allocate memory.
     while(cvec_size(vec_ptr).value < vec_cap - 1){
         CHECK_TRUE(cvec_append(vec_ptr, &u8val).is_ok);
+        CHECK_TRUE(*(uint8_t *)cvec_get(vec_ptr, cvec_size(vec_ptr).value).value == u8val);
     }
     
     result_int_t ri = cvec_append(vec_ptr, &u8val);
@@ -298,7 +321,44 @@ TEST(tg_cvec_populated, appendHandlesFailedAlloc)
     CHECK_EQUAL(status_std_alloc_failure, ri.error);
 }
 
-TEST(tg_cvec_populated, popShrinksVectorCapacity)
+
+TEST(tg_cvec_populated, popReducesVectorSize)
 {
-    
+    uint8_t out_val = 0;
+    size_t old_size = cvec_size(vec_ptr).value;
+
+    //First confirm the value of the last element.
+
+    CHECK_TRUE(cvec_pop(vec_ptr, &out_val).is_ok);
+    CHECK_EQUAL_TEXT(old_size - 1, cvec_size(vec_ptr).value, "The vector size was not correctly reduced.");
 }
+
+TEST(tg_cvec_populated, popReturnsCorrectValues)
+{
+    uint8_t out_val = 0;
+
+    CHECK_TRUE(cvec_pop(vec_ptr, &out_val).is_ok);
+    CHECK_EQUAL(prealloced_elements - 1, out_val);
+}
+
+TEST(tg_cvec_populated, cloneFailsOnNullVector)
+{
+    result_cvec_pt rcv = cvec_clone(NULL);
+    CHECK_FALSE(rcv.is_ok);
+}
+
+TEST(tg_cvec_populated, cloneHandlesFailedAlloc)
+{
+    fail_after = 0;
+    result_cvec_pt rcv = cvec_clone(vec_ptr);
+    CHECK_FALSE(rcv.is_ok);
+    CHECK_EQUAL(status_std_alloc_failure, rcv.error);
+
+    if(rcv.is_ok){
+        cvec_destroy(rcv.value);
+    }
+}
+
+
+
+
