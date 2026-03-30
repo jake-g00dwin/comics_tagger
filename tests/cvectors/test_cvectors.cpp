@@ -60,14 +60,17 @@ TEST(tg_cvectors, cvec_sizeFailsOnNull)
 {
     cvec_t *vec = NULL;
     result_size_t r = cvec_size(vec);
-    CHECK_EQUAL(result_invalid_vector_ptr, r.status);
+    CHECK_TRUE(!r.is_ok);
+    CHECK_TRUE(r.error == status_std_null_ptr);
 }
 
 
 TEST(tg_cvectors, cvec_capacityFailsOnNull)
 {
     cvec_t *vec = NULL;
-    CHECK_EQUAL(result_err, cvec_capacity(vec));
+    result_size_t r = cvec_capacity(vec);
+    CHECK_TRUE(!r.is_ok);
+    CHECK_TRUE(r.error == status_std_null_ptr);
 }
 
 TEST(tg_cvectors, createfailsonzerosize)
@@ -80,7 +83,8 @@ TEST(tg_cvectors, createfailsonzerosize)
 
 TEST(tg_cvectors, createallocatesmemory)
 {
-    result_size_t r;
+    result_int_t ri;
+    result_size_t rs;
     cvec_t *vec_u8_ptr = cvec_create(sizeof(uint8_t));
     if(!vec_u8_ptr){
         FAIL("Returned vector is NULL");
@@ -89,85 +93,99 @@ TEST(tg_cvectors, createallocatesmemory)
     CHECK_EQUAL_TEXT(1, malloc_count, "Incorrect value: malloc_count");
     CHECK_EQUAL_TEXT(1, calloc_count, "Incorrect value: calloc_count");
 
+    rs = cvec_capacity(vec_u8_ptr);
     CHECK_EQUAL_TEXT(
             CVEC_DEFAULT_CAPACITY,
-            cvec_capacity(vec_u8_ptr),
+            rs.value,
             "Initialized with incorrect capacity.");
-    r = cvec_size(vec_u8_ptr);
-    CHECK_EQUAL_TEXT(0, r.value, "Initialized with incorrect size.");
+    rs = cvec_size(vec_u8_ptr);
+    CHECK_EQUAL_TEXT(0, rs.value, "Initialized with incorrect size.");
 
 
-    CHECK_EQUAL_TEXT(result_ok, cvec_destroy(vec_u8_ptr), "cvec_destory() != result_ok");
+    ri = cvec_destroy(vec_u8_ptr);
+    CHECK_TRUE_TEXT(ri.is_ok, "Result of cvec_destroy() is not ok.");
     CHECK_EQUAL_TEXT(2, free_count, "Incorrect value: free_count");
 }
 
 TEST(tg_cvectors, getElementFailsOnNull)
 {
     cvec_t *vec = NULL;
-    CHECK_EQUAL(0, cvec_get(vec, 0));
+    result_void_pt rvp = cvec_get(vec, 0);
+    CHECK_FALSE(rvp.is_ok);
+    CHECK_EQUAL(status_std_null_ptr, rvp.error);
 }
 
 TEST(tg_cvectors, getElementFailsOnInvalidIndexLessThan)
 {
     cvec_t *vec = cvec_create(sizeof(uint8_t));
-    CHECK_EQUAL(NULL, cvec_get(vec, 0));
-    CHECK_EQUAL(result_ok, cvec_destroy(vec));
+    result_void_pt rvp = cvec_get(vec, 0);
+    
+    CHECK_FALSE(rvp.is_ok);
+    CHECK_EQUAL(status_std_invalid_arg, rvp.error);
+
+    CHECK_TRUE(cvec_destroy(vec).is_ok);
 }
 
 TEST(tg_cvectors, appendFailsOnNullVec)
 {
     cvec_t *vec = NULL;
     uint8_t value = 255;
-    CHECK_EQUAL(result_err, cvec_append(vec, &value));
+    CHECK_FALSE(cvec_append(vec, &value).is_ok);
 }
 
 TEST(tg_cvectors, appendFailsOnNullData)
 {
     cvec_t *vec = cvec_create(sizeof(uint8_t));
-    CHECK_EQUAL(result_err, cvec_append(vec, NULL));
 
-    CHECK_EQUAL(result_ok, cvec_destroy(vec));
+    CHECK_FALSE(cvec_append(vec, NULL).is_ok);
+    CHECK_TRUE(cvec_destroy(vec).is_ok);
 }
 
 TEST(tg_cvectors, appendGetOkOnValidVec)
 {
     result_size_t rsz;
+    result_void_pt rvp;
+
     cvec_t *vec = cvec_create(sizeof(uint8_t));
     uint8_t value = 255;
-    CHECK_EQUAL(result_ok, cvec_append(vec, &value));
-    //CHECK_EQUAL(result_ok, cvec_append(vec, &value));
+    CHECK_TRUE(cvec_append(vec, &value).is_ok);
+    
     rsz = cvec_size(vec);
     CHECK_EQUAL(1, rsz.value); 
 
+    rvp = cvec_get(vec, 0);    
+    uint8_t *out = (uint8_t *)rvp.value;
 
-    uint8_t *out = (uint8_t *)cvec_get(vec, 0);
     CHECK_TRUE(out != NULL);
     CHECK_EQUAL(value, (*out));
 
-    CHECK_EQUAL(result_ok, cvec_destroy(vec));
+    CHECK_TRUE(cvec_destroy(vec).is_ok);
 }
 
 TEST(tg_cvectors, appendGetGrowsCapacity)
 {
-    result_size_t rsz;
+    result_size_t rsize;
+    result_size_t rcap;
     cvec_t *vec = cvec_create(sizeof(uint8_t));
     size_t calloc_count_init = calloc_count;
     size_t free_count_init = free_count;
-    
 
     for(uint8_t i = 0; i < 255; i++){
-        CHECK_EQUAL(result_ok, cvec_append(vec, &i));
-        rsz = cvec_size(vec);
-        CHECK_EQUAL(i + 1, rsz.value);
+        //CHECK_EQUAL(result_ok, cvec_append(vec, &i));
+        CHECK_TRUE(cvec_append(vec, &i).is_ok);
+        rsize = cvec_size(vec);
+        CHECK_EQUAL(i + 1, rsize.value);
     }
 
     //Assuming doubling we should see an equal number of frees and allocs
     CHECK_TRUE(calloc_count - calloc_count_init == free_count - free_count_init);
 
-    rsz = cvec_size(vec);
-    CHECK_TRUE(cvec_capacity(vec) > rsz.value);
+    rsize = cvec_size(vec);
+    rcap = cvec_capacity(vec);
+    CHECK_TRUE(rcap.value > rsize.value);
+    CHECK_TRUE(cvec_capacity(vec).value > cvec_size(vec).value);
 
-    CHECK_EQUAL(result_ok, cvec_destroy(vec));
+    CHECK_TRUE(cvec_destroy(vec).is_ok);
 }
 
 TEST(tg_cvectors, popFailsOnEmptyVector)
@@ -205,7 +223,7 @@ TEST_GROUP(tg_cvec_populated)
     void teardown()
     {
         CHECK_TRUE_TEXT(free_count == (calloc_count + malloc_count), "Number of allocated call != free'd calls.");
-        CHECK_EQUAL(result_ok, cvec_destroy(vec_ptr));
+        CHECK_TRUE(cvec_destroy(vec_ptr).is_ok);
     }
 };
 
