@@ -397,4 +397,118 @@ TEST(tg_cvec_populated, cloneHasCorrectData)
     cvec_destroy(rcv.value);
 }
 
+TEST(tg_cvec_populated, sliceFailsOnNullVec)
+{
+    result_cvec_pt rcv = cvec_slice(NULL, 0, 8);
+    CHECK_FALSE(rcv.is_ok);
+    CHECK_EQUAL(status_std_null_ptr, rcv.error);
+}
+
+TEST(tg_cvec_populated, sliceFailsOnInvalidStart)
+{
+    result_cvec_pt rcv = cvec_slice(vec_ptr, prealloced_elements + 1, prealloced_elements - 1);
+    CHECK_FALSE(rcv.is_ok);
+    CHECK_EQUAL(status_std_invalid_arg, rcv.error);
+}
+
+TEST(tg_cvec_populated, sliceFailsOnInvalidEnd)
+{
+    result_cvec_pt rcv = cvec_slice(vec_ptr, 0, prealloced_elements + 1);
+    CHECK_FALSE(rcv.is_ok);
+    CHECK_EQUAL(status_std_invalid_arg, rcv.error);
+}
+
+TEST(tg_cvec_populated, sliceFailsOnNegativeRange)
+{
+    //We give it slice values where the end is less than the start, but both
+    //are valid indecies themselves.
+    result_cvec_pt rcv = cvec_slice(vec_ptr, prealloced_elements - 1, prealloced_elements - 2);
+    CHECK_FALSE(rcv.is_ok);
+    CHECK_EQUAL(status_std_invalid_arg, rcv.error);
+}
+
+TEST(tg_cvec_populated, sliceHandlesAllocVecFailure)
+{
+    fail_after = 0;
+
+    //Try to get copy from zeroth element to near last.
+    result_cvec_pt rcv = cvec_slice(vec_ptr, 0, prealloced_elements - 1);
+
+    CHECK_FALSE(rcv.is_ok);
+    CHECK_EQUAL(status_std_alloc_failure, rcv.error);
+    
+    if(rcv.is_ok){
+        cvec_destroy(rcv.value);
+    }
+}
+
+TEST(tg_cvec_populated, sliceHandlesAllocDataFailure)
+{
+    //Allow the cvec to be allocated/created then fail on data alloc.
+    fail_after = 1;
+
+    //Try to get copy from zeroth element to near last.
+    result_cvec_pt rcv = cvec_slice(vec_ptr, 0, prealloced_elements - 1);
+
+    CHECK_FALSE(rcv.is_ok);
+    CHECK_EQUAL(status_std_alloc_failure, rcv.error);
+
+}
+
+TEST(tg_cvec_populated, slcieHasCorrectShape)
+{
+    const size_t slice_start = 2;
+    const size_t slice_end = prealloced_elements - 1;
+    const size_t slice_size = (slice_end - slice_start) + 1;
+
+    result_cvec_pt rcv = cvec_slice(vec_ptr, slice_start, slice_end);
+    CHECK_TRUE(rcv.is_ok);
+
+    result_size_t rsize = cvec_size(rcv.value);
+    CHECK_TRUE(rsize.is_ok);
+    CHECK_EQUAL_TEXT(slice_size, rsize.value, "The slices size is incorrect.");
+
+    result_size_t rcap = cvec_capacity(rcv.value);
+    CHECK_TRUE(rcap.is_ok);
+    CHECK_EQUAL_TEXT(slice_size, rcap.value, "The slices capacity is incorrect.");
+
+    cvec_destroy(rcv.value);
+}
+
+TEST(tg_cvec_populated, sliceHoldsCorrectData)
+{
+    const size_t slice_start = 2;
+    const size_t slice_end = prealloced_elements - 1; //16-1 = 15
+    const size_t slice_size = (slice_end - slice_start); //(15 - 2) = 13
+
+    result_cvec_pt rcv = cvec_slice(vec_ptr, slice_start, slice_end);
+    CHECK_TRUE(rcv.is_ok);
+
+    //We check the elements against eachother taking into account the offset.
+    result_void_pt rvp;
+    for(size_t i = 0; i < slice_size; i++){
+        rvp = cvec_get(vec_ptr, i + slice_start);
+        CHECK_TRUE(rvp.is_ok);
+        uint8_t expected = *(uint8_t *)rvp.value;
+
+        rvp = cvec_get(rcv.value, i);
+        CHECK_TRUE(rvp.is_ok);
+        uint8_t val = *(uint8_t *)rvp.value;
+
+        //uint8_t expected = *(uint8_t *)cvec_get(vec_ptr, i + slice_start - 1).value;
+        //uint8_t val = *(uint8_t *)cvec_get(rcv.value, i).value;
+        //CHECK_EQUAL(i+2, val);
+
+        CHECK_EQUAL_TEXT(expected, val, "Elements from original and slice vectors don't match.");
+    }
+
+    cvec_destroy(rcv.value);
+}
+
+
+
+
+
+
+
 
