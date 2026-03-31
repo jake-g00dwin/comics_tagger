@@ -3,7 +3,7 @@
  * @details This file is an <Purpose here>
  * @author Jake G
  * @date 2026
- * @copyright None
+ * @copyright (c) 2026 Jake Goodwin
  * @file cbz.h
  */
 
@@ -24,7 +24,7 @@ extern "C"
 #include <wchar.h>
 #include <zip.h>
 
-#define CBZ_MAX_TITLE_LEN 255
+#define CBZ_MAX_TITLE_LEN 255 //
 #define CBZ_MAX_AUTHOR_LEN 255
 #define CBZ_MAX_LANG_LEN 32
 #define CBZ_MAX_DESC_LEN 512

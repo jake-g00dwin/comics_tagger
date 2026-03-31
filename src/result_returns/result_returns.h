@@ -3,7 +3,7 @@
  * @details Designed to provide custon return types for error handling.
  * @author Jake G
  * @date 2026
- * @copyright None
+ * @copyright (c) 2026 Jake Goodwin
  * @file result_returns.h
  *
  * To use this module simply include the header and you can define your own

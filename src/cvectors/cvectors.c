@@ -128,7 +128,7 @@ result_int_t cvec_pop(cvec_t *vec, void *out)
 {
     if (!vec) { return ERR(status_std_null_ptr, result_int_t); }
     if (!out) { return ERR(status_std_invalid_arg, result_int_t); }
-    if (vec->size <= 0) { return ERR(status_std_err, result_int_t); }
+    if(vec->size <= 0){return ERR(status_std_err, result_int_t); }
 
     void *src_data = (char *)vec->data + (vec->size * vec->element_size);
     memcpy(out, src_data, vec->element_size);
@@ -149,25 +149,25 @@ result_int_t cvec_clear_vector(cvec_t *vec)
 
 result_cvec_pt cvec_clone(cvec_t *vec)
 {
-    if (!vec) { return ERR(status_std_null_ptr, result_cvec_pt); }
+    if(!vec){return ERR(status_std_null_ptr, result_cvec_pt);}
     result_cvec_pt rcv = cvec_create(vec->element_size);
 
     // If the creation failed we just pass it along.
-    if (!rcv.is_ok) { return rcv; }
-
-    // First free the default data.
+    if(!rcv.is_ok){return rcv;}
+   
+    //First free the default data.
     free_fn(rcv.value->data);
 
-    // Copy the size and capacity into new clone.
-    rcv.value->size     = vec->size;
+    //Copy the size and capacity into new clone.
+    rcv.value->size = vec->size;
     rcv.value->capacity = vec->capacity;
 
-    rcv.value->data     = calloc_fn(vec->capacity, vec->element_size);
-
-    // Check for alloc failure.
-    if (!rcv.value->data)
+    rcv.value->data = calloc_fn(vec->capacity, vec->element_size);
+    
+    //Check for alloc failure.
+    if(!rcv.value->data)
     {
-        // First free the newly created vector.
+        //First free the newly created vector.
         free_fn(rcv.value);
         return ERR(status_std_alloc_failure, result_cvec_pt);
     }
@@ -178,27 +178,27 @@ result_cvec_pt cvec_clone(cvec_t *vec)
 
 static bool increase_capacity(cvec_t *vec, size_t new_capacity)
 {
-    // I don't do any null vec checking here as this is only for internal use.
+    //I don't do any null vec checking here as this is only for internal use.
 
-    // Check if new capacity is larger than old capacity.
-    if (new_capacity <= vec->capacity) { return false; }
+    //Check if new capacity is larger than old capacity.
+    if(new_capacity <= vec->capacity){return false;}
 
-    // Hold the old memory data address.
+    //Hold the old memory data address.
     void *old_data = vec->data;
 
-    // Allocate new memory.
+    //Allocate new memory.
     vec->data = NULL;
     vec->data = calloc_fn(new_capacity, vec->element_size);
-    if (!vec->data) { return false; }
+    if(!vec->data){return false;}
 
-    // Now that we know the memory allocated set the size/capacity fields.
-    vec->size     = 0;
+    //Now that we know the memory allocated set the size/capacity fields.
+    vec->size = 0;
     vec->capacity = new_capacity;
 
     // arguments: destination, source, number of bytes.
     memcpy(vec->data, old_data, (vec->size * vec->element_size));
 
-    // Fre The old address.
+    //Fre The old address.
     free_fn(old_data);
 
     return true;
@@ -206,30 +206,35 @@ static bool increase_capacity(cvec_t *vec, size_t new_capacity)
 
 result_cvec_pt cvec_slice(cvec_t *vec, size_t start, size_t end)
 {
-    if (!vec) { return ERR(status_std_null_ptr, result_cvec_pt); }
-    if (start > vec->size) { return ERR(status_std_invalid_arg, result_cvec_pt); }
-    if (end > vec->size) { return ERR(status_std_invalid_arg, result_cvec_pt); }
-    if (end <= start) { return ERR(status_std_invalid_arg, result_cvec_pt); }
+    if(!vec){return ERR(status_std_null_ptr, result_cvec_pt);}
+    if(start > vec->size){return ERR(status_std_invalid_arg, result_cvec_pt);}
+    if(end > vec->size){return ERR(status_std_invalid_arg, result_cvec_pt);}
+    if(end <= start){return ERR(status_std_invalid_arg, result_cvec_pt);}
+
 
     result_cvec_pt rcv = cvec_create(vec->element_size);
-    if (!rcv.is_ok) { return rcv; }
-
-    // Add the specified range of elements using memcpy function.
-    // Example: say we get the range [0-7] = 8 elements. --> (7-0)+1 = num.
+    if(!rcv.is_ok){return rcv;}
+    
+    //Add the specified range of elements using memcpy function.
+    //Example: say we get the range [0-7] = 8 elements. --> (7-0)+1 = num.
     size_t new_size = (end - start) + 1;
 
-    if (!increase_capacity(rcv.value, new_size))
+    if(!increase_capacity(rcv.value, new_size))
     {
-        // We failed to reallocate the neede memory.
-        // Free the newly created cvector and return the error.
+        //We failed to reallocate the neede memory.
+        //Free the newly created cvector and return the error.
         free_fn(rcv.value);
         ERR(status_std_alloc_failure, result_cvec_pt);
     }
 
-    // Calculate the first element's address that we will copy into the slice.
+    //Calculate the first element's address that we will copy into the slice.
     void *src_addr = (char *)vec->data + (start * vec->element_size);
-    memcpy(rcv.value->data, src_addr, (new_size * vec->element_size));
+    memcpy(rcv.value->data, src_addr, (new_size * vec->element_size)); 
     rcv.value->size = new_size;
 
-    return rcv;
+
+    return rcv; 
 }
+
+
+

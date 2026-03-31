@@ -3,7 +3,7 @@
  * @details This file is the header for the cvector lib.
  * @author Jake G
  * @date 2026
- * @copyright None
+ * @copyright (c) 2026 Jake Goodwin
  * @file cvectors.h
  */
 
