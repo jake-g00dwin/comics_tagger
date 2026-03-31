@@ -505,6 +505,72 @@ TEST(tg_cvec_populated, sliceHoldsCorrectData)
     cvec_destroy(rcv.value);
 }
 
+TEST(tg_cvec_populated, insertFailsOnNullVec)
+{
+    uint8_t value = 128;
+    result_int_t ri = cvec_insert(NULL, &value, 0);
+    CHECK_FALSE(ri.is_ok);
+    CHECK_EQUAL(status_std_null_ptr, ri.error);
+}
+
+TEST(tg_cvec_populated, insertFailsOnNullArg)
+{
+    result_int_t ri = cvec_insert(vec_ptr, NULL, 0);
+    CHECK_FALSE(ri.is_ok);
+    CHECK_EQUAL(status_std_invalid_arg, ri.error);
+}
+
+TEST(tg_cvec_populated, insertFailsOnInvalidIndex)
+{
+    uint8_t value = 128;
+    const size_t invalid_index = cvec_size(vec_ptr).value + 1;
+    result_int_t ri = cvec_insert(vec_ptr, &value, invalid_index);
+    CHECK_FALSE(ri.is_ok);
+    CHECK_EQUAL(status_std_null_ptr, ri.error);
+}
+
+TEST(tg_cvec_populated, insertKeepsVectorShape)
+{
+    size_t old_size = cvec_size(vec_ptr).value;
+    size_t old_cap = cvec_size(vec_ptr).value;
+    uint8_t value = 128;
+
+    result_int_t ri = cvec_insert(vec_ptr, &value, 0);
+    CHECK_TRUE(ri.is_ok);
+
+    CHECK_EQUAL_TEXT(old_size, cvec_size(vec_ptr).value, "Insert changed the size that it shouldn't have.");
+    CHECK_EQUAL_TEXT(old_cap, cvec_capacity(vec_ptr).value, "Insert changed the capacity that it shouldn't have.");
+
+}
+
+TEST(tg_cvec_populated, insertPlacesValueInCorrectLocation)
+{
+    const size_t insert_index = 0;
+    uint8_t value = 42;
+        
+    result_int_t ri = cvec_insert(vec_ptr, &value, insert_index);
+    CHECK_TRUE(ri.is_ok);
+
+    uint8_t inserted_value = *(uint8_t *)cvec_get(vec_ptr, insert_index).value;
+
+    CHECK_EQUAL_TEXT(value, inserted_value, "The value at the indexed location isn't correct.");
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
