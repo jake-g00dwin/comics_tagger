@@ -1,14 +1,19 @@
-build/CMakeFiles
-build/Testing/Temporary
-build/cpputest
-build/src
-build/tests
-build/CMakeCache.txt
-build/CTestTestfile.cmake
-build/Makefile
-build/cmake_install.cmake
-build/compile_commands.json
+# Ignore everything in these locations.
+build/*
+
+# Keep the build directory itself.
+!build/
+
+# Allow the hidden file for version control tracking.
+!build/.git_dir
+
 .cache/clangd/index
 build/.cache/clangd/index
+docs/doxygen_docs/latex
+docs/doxygen_docs/html
+
+# The tags file is generated for editors from the script.
 tags
-AllTests.core
+
+# Ignore all core dump files, they get generated from testing and segfaults.
+*.core
