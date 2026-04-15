@@ -22,16 +22,29 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Request C  standard features
-set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED True)
 #set(CMAKE_C_FLAGS "-Wall -Werror -Wpedantic")
 set(CMAKE_C_FLAGS "-Wall -Wpedantic")
 
 # SETUP THE CXX flags for .cpp
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 #set(CMAKE_CXX_FLAGS "-Wall -Werror -Wpedantic")
 set(CMAKE_CXX_FLAGS "-Wall -Wpedantic")
+
+
+# #######################################
+# Libraries to include 
+# #######################################
+
+# Request the required wxWidgets libs
+find_package(wxWidgets COMPONENTS core base REQUIRED)
+
+#find_package(wxWidgets 3.3 COMPONENTS core base REQUIRED CONFIG)
+include(${wxWidgets_USE_FILE})
+
+
 
 
 
