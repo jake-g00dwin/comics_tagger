@@ -297,6 +297,12 @@ run_c_tests () {
     run_test_runner AllTests
 }
 
+build_project_debug () {
+    clear_cmake_cache
+    cmake -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE} ../
+    make ${PROJECT_NAME}
+}
+
 print_menu () {
     echo "BUILD MENU:"
     echo "0. Add Mock Module"
@@ -333,6 +339,7 @@ main() {
                 echo "You selected Option 2"
                 echo "Not yet implimented" 
                 valid_choice=true
+                build_project_debug
                 ;;
             3)
                 echo "You selected Option 3"
